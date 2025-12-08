@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using DocumentationGenerator.Helpers;
 using DocumentationGenerator.Models.Declarations;
@@ -23,10 +24,52 @@ public static class VbDeclarationsParser
                 case ClassBlockSyntax classBlock:
                     results.Classes.Add(HandleClassBlockSyntax(classBlock));
                     break;
+                case InterfaceBlockSyntax interfaceBlock:
+                    results.Interfaces.Add(HandleInterfaceBlockSyntax(interfaceBlock));
+                    break;
+                case StructureBlockSyntax structBlock:
+                    results.Structs.Add(HandleStructBlockSyntax(structBlock));
+                    break;
             }
         }
 
         return results;
+    }
+
+    private static StructDeclaration HandleStructBlockSyntax(StructureBlockSyntax structBlock)
+    {
+        TypeStatementSyntax header = structBlock.BlockStatement;
+        string name = header.Identifier.Text;
+
+        Declaration[]? newProperties;
+        Declaration[]? newfields;
+        Declaration[]? newMethods;
+
+        PropertyBlockSyntax[] properties = structBlock.Members.OfType<PropertyBlockSyntax>().ToArray();
+        FieldDeclarationSyntax[] fields = structBlock.Members.OfType<FieldDeclarationSyntax>().ToArray();
+        MethodBlockSyntax[] methods = structBlock.Members.OfType<MethodBlockSyntax>().ToArray();
+
+        newProperties = GetPropertyDeclarations(properties);
+        newfields = GetFieldsDeclarations(fields);
+        newMethods = GetMethodsDeclarations(methods);
+
+
+        return new StructDeclaration(name, GetXML(structBlock, XmlTag.summary), newProperties, newfields, newMethods);
+
+    }
+
+    private static InterfaceDeclaration HandleInterfaceBlockSyntax(InterfaceBlockSyntax interfaceBlock)
+    {
+        TypeStatementSyntax header = interfaceBlock.BlockStatement;
+        string name = header.Identifier.Text;
+
+        Declaration[]? newMethods;
+
+        MethodBlockSyntax[] methods = interfaceBlock.Members.OfType<MethodBlockSyntax>().ToArray();
+
+        newMethods = GetMethodsDeclarations(methods);
+
+        return new InterfaceDeclaration(name, GetXML(interfaceBlock, XmlTag.summary), [], newMethods);
     }
 
     private static ClassDeclaration HandleClassBlockSyntax(ClassBlockSyntax classBlock)
@@ -46,21 +89,31 @@ public static class VbDeclarationsParser
         newfields = GetFieldsDeclarations(fields);
         newMethods = GetMethodsDeclarations(methods);
 
-        return new ClassDeclaration(className, GetXML(classBlock,XmlTag.summary), [], newMethods, newfields, newProperties);
+        return new ClassDeclaration(className, GetXML(classBlock, XmlTag.summary), [], newMethods, newfields, newProperties);
     }
 
     private static Declaration[]? GetFieldsDeclarations(FieldDeclarationSyntax[] fields)
     {
-        if(fields.Length < 0) {return null;}
+        if (fields.Length < 0) { return null; }
 
         Declaration[] declarations = new Declaration[fields.Length];
 
         int index = 0;
         foreach (FieldDeclarationSyntax field in fields)
         {
-            foreach(VariableDeclaratorSyntax variable in field.Declarators)
+            foreach (VariableDeclaratorSyntax variable in field.Declarators)
             {
-                declarations[index] = new Declaration(variable.Names[0].ToString(),GetXML(field, XmlTag.summary), variable.AsClause.Type().ToString());
+                string? type = null;
+                if (variable.AsClause != null && variable.AsClause.Type() != null)
+                {
+                    type = variable.AsClause.Type().ToString();
+                }
+                declarations[index] = new Declaration(
+                    variable.Names[0].ToString(),
+                    GetXML(field, XmlTag.summary),
+                    type,
+                    null,
+                    IsPrimitiveType(type));
             }
             index++;
         }
@@ -70,32 +123,55 @@ public static class VbDeclarationsParser
 
     private static Declaration[]? GetMethodsDeclarations(MethodBlockSyntax[] methods)
     {
-        if(methods.Length < 0) {return null;}
+        if (methods.Length < 0) { return null; }
 
         Declaration[] declarations = new Declaration[methods.Length];
 
         int index = 0;
         foreach (MethodBlockSyntax method in methods)
         {
-            MethodStatementSyntax header = method.SubOrFunctionStatement;
 
-            declarations[index] = new Declaration(header.Identifier.Text, GetXML(method,XmlTag.summary),header.AsClause?.Type.ToString() ?? "Void", GetXML(method,XmlTag.returns));
+            MethodStatementSyntax header = method.SubOrFunctionStatement;
+            string? type = "Void";
+            if (header.AsClause != null && header.AsClause.Type() != null)
+            {
+                type = header.AsClause.Type().ToString();
+            }
+
+            declarations[index] = new Declaration(
+                header.Identifier.Text,
+                GetXML(method, XmlTag.summary),
+                type,
+                GetXML(method, XmlTag.returns),
+                IsPrimitiveType(type));
+
             index++;
         }
+
 
         return declarations;
     }
 
     private static Declaration[]? GetPropertyDeclarations(PropertyBlockSyntax[] properties)
     {
-        if(properties.Length < 0) {return null;}
+        if (properties.Length < 0) { return null; }
 
         Declaration[] declarations = new Declaration[properties.Length];
 
         int index = 0;
         foreach (PropertyBlockSyntax property in properties)
         {
-            declarations[index] = new Declaration(property.PropertyStatement.Identifier.Text, GetXML(property,XmlTag.summary),property.PropertyStatement.AsClause.Type().ToString(), null, null, null);
+            string? type = null;
+            if (property.PropertyStatement.AsClause != null && property.PropertyStatement.AsClause.Type() != null)
+            {
+                type = property.PropertyStatement.AsClause.Type().ToString();
+            }
+            declarations[index] = new Declaration(
+                property.PropertyStatement.Identifier.Text,
+                GetXML(property, XmlTag.summary),
+                type,
+                null,
+                IsPrimitiveType(type));
             index++;
         }
 
@@ -156,5 +232,31 @@ public static class VbDeclarationsParser
                               });
 
         return string.Join(" ", lines);
+    }
+
+    /// <summary>
+    /// Determines whether the given type in a string is a primitive.
+    /// </summary>
+    /// <param name="type">The type in a string format.</param>
+    /// <returns>Returns true if is a primitive, otherwise false.</returns>
+    private static bool IsPrimitiveType(string? type)
+    {
+        if (type == null) { return false; }
+
+        if (type.ToLower() == "integer") { return true; }
+        if (type.ToLower() == "boolean") { return true; }
+        if (type.ToLower() == "sbyte") { return true; }
+        if (type.ToLower() == "int16") { return true; }
+        if (type.ToLower() == "uint16") { return true; }
+        if (type.ToLower() == "int32") { return true; }
+        if (type.ToLower() == "uint32") { return true; }
+        if (type.ToLower() == "int64") { return true; }
+        if (type.ToLower() == "uint64") { return true; }
+        if (type.ToLower() == "single") { return true; }
+        if (type.ToLower() == "double") { return true; }
+        if (type.ToLower() == "char") { return true; }
+        if (type.ToLower() == "float") { return true; }
+
+        return false;
     }
 }
