@@ -55,7 +55,6 @@ public static class VbDeclarationsParser
 
 
         return new StructDeclaration(name, GetXML(structBlock, XmlTag.summary), newProperties, newfields, newMethods);
-
     }
 
     private static InterfaceDeclaration HandleInterfaceBlockSyntax(InterfaceBlockSyntax interfaceBlock)
