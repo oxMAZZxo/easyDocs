@@ -11,7 +11,7 @@ mkdir -p "$PUBLISH_DIR/linux"
 # Windows Build
 # -------------------------------
 echo "Building Windows release..."
-dotnet publish ./DocumentationGenerator.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o "$PUBLISH_DIR/windows"
+dotnet publish ./DocumentationGenerator.csproj -c Release -r win-x64 -o "$PUBLISH_DIR/windows"
 
 echo "Zipping Windows release..."
 cd "$PUBLISH_DIR/windows"
@@ -22,13 +22,13 @@ cd ../../
 # Linux Build
 # -------------------------------
 echo "Building Linux release..."
-dotnet publish ./DocumentationGenerator.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -o "$PUBLISH_DIR/linux"
+dotnet publish ./DocumentationGenerator.csproj -c Release -r linux-x64 -o "$PUBLISH_DIR/linux"
 
 echo "Making Linux binary executable..."
 chmod +x "$PUBLISH_DIR/linux/$PROJECT_NAME"
 
 echo "Creating tar.gz for Linux..."
-tar -czvf "$PUBLISH_DIR/$PROJECT_NAME-linux.tar.gz" -C "$PUBLISH_DIR/linux" "$PROJECT_NAME"
+tar -czvf "$PUBLISH_DIR/$PROJECT_NAME-linux.tar.gz" -C "$PUBLISH_DIR/linux" .
 
 echo "Builds completed! Files in '$PUBLISH_DIR':"
 ls "$PUBLISH_DIR"

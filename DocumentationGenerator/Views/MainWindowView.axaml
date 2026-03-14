@@ -22,7 +22,7 @@
         <Grid ColumnDefinitions="250,*" RowDefinitions="50,*">
             <StackPanel Grid.Row="0" Grid.ColumnSpan="2" HorizontalAlignment="Left"
                         Orientation="Horizontal">
-                <Image Margin="3" VerticalAlignment="Top" Source="avares://DocumentationGenerator/Assets/Doc Gen Icon Rounded Corners.png" />
+                <Image Margin="3" VerticalAlignment="Top" Source="avares://EasyDocs/Assets/Doc Gen Icon Rounded Corners.png" />
                 <Button x:Name="FileButton" Classes="ChromeButton" Click="OnFileButtonClicked"
                         Content="File" />
                 <Button Classes="ChromeButton" Command="{Binding SettingsButtonCommand}" Content="Settings" HotKey="Ctrl+S" />

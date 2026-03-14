@@ -12,6 +12,12 @@
     <Product>EasyDocs</Product>
     <Description>Generate documentation for your projects quickly.</Description>
   </PropertyGroup>
+  <PropertyGroup>
+  <PublishSingleFile>true</PublishSingleFile>
+  <SelfContained>true</SelfContained>
+  <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+</PropertyGroup>
+
   <ItemGroup>
     <AvaloniaResource Include="Assets\**"/>
   </ItemGroup>
