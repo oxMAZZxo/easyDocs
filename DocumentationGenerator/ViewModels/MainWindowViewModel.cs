@@ -262,6 +262,9 @@ public class MainWindowViewModel : BaseViewModel
         await sourceFileReader.ReadSourceDirectory(folders[0], languageSelectionWindowView.SelectedProgrammingLanguage);
         FileName = folders[0].Name;
         Output = sourceFileReader.GetAllDeclarations();
+
+
+        
     }
 
     private async void LoadFile()
