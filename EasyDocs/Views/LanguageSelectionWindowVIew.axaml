@@ -1,0 +1,40 @@
+<Window x:Class="EasyDocs.Views.LanguageSelectionWindowView"
+        xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        Width="400"
+        Height="200"
+        d:DesignHeight="200"
+        d:DesignWidth="400"
+        CanResize="False"
+        ExtendClientAreaChromeHints="NoChrome"
+        SystemDecorations="BorderOnly"
+        WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d">
+
+    <Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="VerticalAlignment" Value="Bottom" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="10" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="CornerRadius" Value="15"/>
+
+        </Style>
+    </Window.Styles>
+
+    <Border BorderBrush="DarkGray" BorderThickness="1" CornerRadius="15">
+        <Grid ColumnDefinitions="200,200">
+            <Label Grid.ColumnSpan="2" Margin="10" HorizontalAlignment="Center"
+                   VerticalAlignment="Top" Content="Please Select the Language Type" FontSize="18" />
+
+            <ComboBox x:Name="ProgLangOptions" Grid.ColumnSpan="2" Margin="10,0"
+                      HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+            <Button Grid.Column="0" HorizontalAlignment="Left" Click="OnOkayButtonClicked"
+                    Content="Okay" />
+            <Button Grid.Column="1" HorizontalAlignment="Right" Click="OnCancelButtonClicked"
+                    Content="Cancel" />
+        </Grid>
+    </Border>
+</Window>
