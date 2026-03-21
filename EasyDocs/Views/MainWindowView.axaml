@@ -16,7 +16,7 @@
         mc:Ignorable="d">
 
     <Design.DataContext>
-        <vm:MainWindowViewModel />
+        <vm:MainWindowViewModel/>    
     </Design.DataContext>
     <Border BorderBrush="#3a3a3a" BorderThickness="1">
         <Grid ColumnDefinitions="250,*" RowDefinitions="50,*">
@@ -29,7 +29,7 @@
                 <Button Classes="ChromeButton" Content="Help" />
             </StackPanel>
 
-            <Popup x:Name="FilePopup" Grid.ColumnSpan="2" Focusable="True"
+            <Popup x:Name="FilePopup" Grid.ColumnSpan="2" Focusable="True" 
                    Placement="BottomEdgeAlignedLeft"
                    PlacementTarget="{Binding ElementName=FileButton}">
                 <Border Classes="PopupBorder">
@@ -62,10 +62,10 @@
                     <StackPanel>
                         <Button Classes="MenuButton" Click="OnPopupButtonClick"
                                 Command="{Binding ExportPDFDocumentationCommand}"
-                                Content="Export to PDF." HotKey="Ctrl+E+P" ToolTip.Tip="All data will be compiled into one PDF Document. HOTKEY: CTRL+E+P" />
+                                Content="Export to PDF." HotKey="Ctrl+P" ToolTip.Tip="All data will be compiled into one PDF Document. HOTKEY: CTRL+E+P" />
                         <Button Classes="MenuButton" Click="OnPopupButtonClick"
                                 Command="{Binding ExportHTMLDocumentationCommand}"
-                                Content="Export to HTML." HotKey="Ctrl+E+H" ToolTip.Tip="All data will be compiled into a HTML website. HOTKEY: CTRL+E+H" />
+                                Content="Export to HTML." HotKey="Ctrl+H" ToolTip.Tip="All data will be compiled into a HTML website. HOTKEY: CTRL+E+H" />
                     </StackPanel>
                 </Border>
             </Popup>

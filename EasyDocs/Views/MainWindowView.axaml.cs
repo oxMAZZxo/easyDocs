@@ -3,9 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using EasyDocs.ViewModels;
-using EasyDocs.Helpers;
-using System.IO;
-using Avalonia.VisualTree;
 
 namespace EasyDocs.Views;
 
@@ -24,9 +21,9 @@ public partial class MainWindowView : Window
         this.PointerEntered += OnWindowPointerEntered;
     }
 
-    private void OnMenuButtonPointerOver(object? sender, RoutedEventArgs e)
+    private void OnMenuButtonPointerOver(object? sender, PointerEventArgs e)
     {
-        if(FilePopup.IsOpen && ExportPopup.IsOpen)
+        if (FilePopup.IsOpen && ExportPopup.IsOpen)
         {
             ExportPopup.Close();
             FilePopup.Focus();
@@ -40,8 +37,8 @@ public partial class MainWindowView : Window
 
     private void OnWindowPointerEntered(object? sender, PointerEventArgs e)
     {
-        if(!windowLostFocus) { return; }
-        if(FilePopup.IsOpen && windowLostFocus)
+        if (!windowLostFocus) { return; }
+        if (FilePopup.IsOpen && windowLostFocus)
         {
             FilePopup.Close();
             this.Focus();
@@ -60,13 +57,14 @@ public partial class MainWindowView : Window
 
     private void OnFileButtonClicked(object? sender, RoutedEventArgs e)
     {
-        if(FilePopup.IsOpen)
+        if (FilePopup.IsOpen)
         {
             FilePopup.Close();
-        }else
+        }
+        else
         {
             FilePopup.Open();
-        }        
+        }
     }
 
     private void OnExportButtonClicked(object? sender, RoutedEventArgs e)
@@ -79,6 +77,4 @@ public partial class MainWindowView : Window
         ExportPopup.Close();
         FilePopup.Close();
     }
-
-
 }

@@ -219,6 +219,10 @@ public class SettingsViewModel : BaseViewModel
         }
     }
 
+    public SettingsViewModel() : base()
+    {
+        // if(Design.IsDesignMode) {Debug.WriteLine("Design Mode On");}
+    }
 
     public SettingsViewModel(Window owner) : base(owner)
     {

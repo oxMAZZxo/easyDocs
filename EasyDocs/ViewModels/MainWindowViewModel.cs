@@ -58,6 +58,11 @@ public class MainWindowViewModel : BaseViewModel
     public ICommand SettingsButtonCommand { get; set; }
     public ICommand ExitAppCommand { get; set; }
 
+    public MainWindowViewModel() : base()
+    {
+        
+    }
+
     public MainWindowViewModel(Window owner) : base(owner)
     {
         owner.Closing += OnAppShuttingDown;
