@@ -221,6 +221,28 @@ namespace EasyDocs.Helpers
                 return null;
             }
         }
+
+        /// <summary>
+        /// Checks whether a string contains an invalid character.
+        /// </summary>
+        /// <param name="s">The string to check</param>
+        /// <param name="invalidCharacters">A string comprised of all the invalid characters to check.</param>
+        /// <returns>Returns true if an invalid character exists within the string, otherwise false.</returns>
+        public static bool CheckForInvalidCharacters(string s, string invalidCharacters)
+        {
+            for (int i = 0; i < s.Length; i++)
+            {
+                for (int j = 0; j < invalidCharacters.Length; j++)
+                {
+                    if (s[i] == invalidCharacters[j])
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
     }
 
     /// <summary>

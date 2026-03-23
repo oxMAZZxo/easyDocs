@@ -84,7 +84,7 @@
 
             <TextBox Grid.Row="1" Grid.Column="2" Height="30"
                      Margin="10,50" HorizontalAlignment="Stretch" VerticalAlignment="Top"
-                     Text="{Binding ProjectName}"
+                     Text="{Binding ProjectName}" 
                      Watermark="Enter this projects name." />
 
             <TextBox Grid.Row="1" Grid.Column="2" Height="30"

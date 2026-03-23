@@ -17,6 +17,8 @@ namespace EasyDocs.ViewModels;
 
 public class MainWindowViewModel : BaseViewModel
 {
+    private const string INVALID_CHARACTERS = @"!""£$%^&*€()-=_+[]{};:'@#~,<.>/?\|`¬―";
+
     private string fileName;
     private FilePickerOpenOptions filePickerOpenOptions;
     private FolderPickerOpenOptions directoryPickerOpenOptions;
@@ -140,9 +142,8 @@ public class MainWindowViewModel : BaseViewModel
 
     private async void ExportToHTML()
     {
-        bool noData = await CheckNoData();
-        bool hasProjectName = await CheckProjectNameAsync();
-        if (noData || !hasProjectName) { return; }
+        bool validCall = await CheckValidExportCall();
+        if (!validCall) { return; }
 
         TopLevel? topLevel = TopLevel.GetTopLevel(Owner);
         if (topLevel == null) { return; }
@@ -173,9 +174,8 @@ public class MainWindowViewModel : BaseViewModel
 
     private async void ExportToPDF()
     {
-        bool noData = await CheckNoData();
-        bool hasProjectName = await CheckProjectNameAsync();
-        if (noData || !hasProjectName) { return; }
+        bool validCall = await CheckValidExportCall();
+        if (!validCall) { return; }
 
         TopLevel? topLevel = TopLevel.GetTopLevel(Owner);
         if (topLevel == null) { return; }
@@ -200,7 +200,11 @@ public class MainWindowViewModel : BaseViewModel
         FileName = "The documentation was generated successfully.";
     }
 
-    private async Task<bool> CheckProjectNameAsync()
+    /// <summary>
+    /// Checks whether the Project Name input by the user is valid. Ensures it is not left blank, and also not containing invalid characters.
+    /// </summary>
+    /// <returns>Returns false if the Project Name is invalid, otherwise true.</returns>
+    private async Task<bool> CheckValidProjectNameAsync()
     {
         if (string.IsNullOrEmpty(ProjectName) || string.IsNullOrWhiteSpace(ProjectName))
         {
@@ -208,7 +212,23 @@ public class MainWindowViewModel : BaseViewModel
             await box.ShowAsPopupAsync(Owner);
             return false;
         }
+
+        if(Utilities.CheckForInvalidCharacters(ProjectName,INVALID_CHARACTERS))
+        {
+            IMsBox<ButtonResult> box = MessageBoxManager.GetMessageBoxStandard("Error!", $"The project name contains invalid characters. Ensure none of the following characters are present in the project name: {INVALID_CHARACTERS}.", ButtonEnum.Ok, Icon.Error, WindowStartupLocation.CenterOwner);
+            await box.ShowAsPopupAsync(Owner);
+            return false;
+        }
         return true;
+    }
+
+    private async Task<bool> CheckValidExportCall()
+    {
+        bool noData = await CheckNoData();
+        if(noData) {return false;}
+        bool valid = await CheckValidProjectNameAsync();
+
+        return valid;
     }
 
     private async Task<bool> CheckHasData()
